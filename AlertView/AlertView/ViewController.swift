@@ -33,8 +33,12 @@ class ViewController: UIViewController {
         // simple way to show alert view
         
         alertView = AlertVw(title:"放弃行程", description:"行程放弃了就无法恢复了哦～行程放弃了就无法恢复了哦～行程放弃了就无法恢复了哦～行程放弃了就无法恢复了哦～行程放弃了就无法恢复了哦～行程放弃了就无法恢复了哦～", image:#imageLiteral(resourceName: "error"))
+        
         alertView.show(animated: true)
-
+        //可以弹出内容的view
+//        let view = UIView.init(frame: CGRect.init(x: 100, y: 100, width: 100, height: 100))
+//        view.backgroundColor = UIColor.red
+//        alertView.dialogView.addSubview(view)
     }
     
     // to show types of alert view

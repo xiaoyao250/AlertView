@@ -58,23 +58,11 @@ class AlertVw: UIView, alertProtocol {
     }()
     fileprivate lazy var btnDone: UIButton = {
         let btnDone = UIButton()
-        btnDone.addTarget(self, action: #selector(didButtonTapped), for: UIControlEvents.touchUpInside)
         btnDone.backgroundColor =  UIColor.darkText
         btnDone.setTitleColor(UIColor.groupTableViewBackground, for: UIControlState.normal)
         btnDone.titleLabel?.font = UIFont(name: "Avenir Next Bold", size: 17)
         return btnDone
     }()
-    
-    fileprivate var btnTxtColor : UIColor?
-    fileprivate var btnBGColor = UIColor()
-    fileprivate var btnFont = UIFont()
-    
-    fileprivate var lblTitleTxtColor = String()
-    fileprivate var lblTitleTxtFont = String()
-    
-    fileprivate var lblDesTxtColor = String()
-    fileprivate var lblDesTxtFont = String()
-
     
     convenience init(title:String, description:String, image:UIImage) {
         self.init(frame:UIScreen.main.bounds)
@@ -142,11 +130,10 @@ class AlertVw: UIView, alertProtocol {
         imageView.image = image
         titleLabel.text = title
         lblMessage.text = description
-        
         btnDone.setTitle("Okay", for: UIControlState.normal)
+        btnDone.addTarget(self, action: #selector(didButtonTapped), for: UIControlEvents.touchUpInside)
         
         let dialogViewWidth = 260
-        
         backgroundView.frame = self.frame
         
         imageView.frame.origin = CGPoint(x: -13, y: -13)
@@ -169,7 +156,6 @@ class AlertVw: UIView, alertProtocol {
         dialogView.addSubview(titleLabel)
         dialogView.addSubview(lblMessage)
         dialogView.addSubview(btnDone)
-        
         self.createGradientLayer(view: dialogView, colorOne: UIColor.white, colorTwo: UIColor.white)
         addSubview(dialogView)
         

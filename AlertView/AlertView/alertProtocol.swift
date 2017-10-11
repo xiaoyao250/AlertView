@@ -13,10 +13,10 @@ import UIKit
 protocol alertProtocol {
     func show(animated:Bool)
     func dismiss(animated:Bool)
-    var backgroundView:UIView{get}
-    var dialogView:UIView {get set}
-    var appearFrom:String {get}
-    var clearBackground : Bool {get}
+    var backgroundView: UIView {get}
+    var dialogView: UIView {get set}
+    var appearFrom: String {get}
+    var clearBackground: Bool {get}
 }
 
 extension alertProtocol where Self:UIView{
