@@ -11,15 +11,59 @@ import UIKit
 class AlertVw: UIView, alertProtocol {
     
     // Declare the protocol controls
-    var backgroundView = UIView()
-    var dialogView = UIView()
+    lazy var backgroundView: UIView = {
+        let backgroundView = UIView()
+        backgroundView.backgroundColor = UIColor.black
+        backgroundView.alpha = 0.6
+        return backgroundView
+    }()
+    lazy var dialogView: UIView = {
+        let dialogView = UIView()
+        dialogView.backgroundColor = UIColor.clear
+        dialogView.layer.cornerRadius = 10
+        dialogView.clipsToBounds = true
+        return dialogView
+    }()
     var appearFrom = String()
     var clearBackground = Bool()
     
-    fileprivate var imageView = UIImageView()
-    fileprivate var titleLabel = UILabel()
-    fileprivate var lblMessage = UILabel()
-    fileprivate var btnDone = UIButton()
+    fileprivate lazy var imageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.layer.cornerRadius = imageView.frame.size.height/2
+        imageView.clipsToBounds = true
+        imageView.alpha = 0.9
+        imageView.contentMode = .scaleAspectFit
+        
+
+        return imageView
+    }()
+    fileprivate lazy var titleLabel: UILabel = {
+        let titleLabel = UILabel()
+        titleLabel.font = UIFont(name: "Futura", size: 22)
+        titleLabel.textAlignment = .left
+        titleLabel.lineBreakMode = NSLineBreakMode.byWordWrapping
+        titleLabel.numberOfLines = 0
+        titleLabel.sizeToFit()
+        return titleLabel
+    }()
+    fileprivate lazy var lblMessage: UILabel = {
+        let lblMessage = UILabel()
+        lblMessage.numberOfLines = 0
+        lblMessage.lineBreakMode = NSLineBreakMode.byWordWrapping
+        lblMessage.font = UIFont(name: "Futura", size: 17)
+        lblMessage.textAlignment = NSTextAlignment.center
+        lblMessage.textColor = UIColor.darkGray
+        lblMessage.sizeToFit()
+        return lblMessage
+    }()
+    fileprivate lazy var btnDone: UIButton = {
+        let btnDone = UIButton()
+        btnDone.addTarget(self, action: #selector(didButtonTapped), for: UIControlEvents.touchUpInside)
+        btnDone.backgroundColor =  UIColor.darkText
+        btnDone.setTitleColor(UIColor.groupTableViewBackground, for: UIControlState.normal)
+        btnDone.titleLabel?.font = UIFont(name: "Avenir Next Bold", size: 17)
+        return btnDone
+    }()
     
     fileprivate var btnTxtColor : UIColor?
     fileprivate var btnBGColor = UIColor()
@@ -94,62 +138,39 @@ class AlertVw: UIView, alertProtocol {
     func initialise(title:String, description:String, image:UIImage) {
         
         // get dynamic width for alertView and all controlls
+        
+        imageView.image = image
+        titleLabel.text = title
+        lblMessage.text = description
+        
+        btnDone.setTitle("Okay", for: UIControlState.normal)
+        
         let dialogViewWidth = 260
         
-        backgroundView.frame = frame
-        backgroundView.backgroundColor = UIColor.black
-        backgroundView.alpha = 0.6
-        addSubview(backgroundView)
+        backgroundView.frame = self.frame
         
         imageView.frame.origin = CGPoint(x: -13, y: -13)
         imageView.frame.size = CGSize(width: 70 , height: 70)
-        imageView.image = image
-        imageView.layer.cornerRadius = imageView.frame.size.height/2
-        imageView.clipsToBounds = true
-        imageView.alpha = 0.9
-        imageView.contentMode = .scaleAspectFit
-        dialogView.addSubview(imageView)
-        
-        titleLabel.frame = CGRect(x: imageView.frame.size.width-5, y: imageView.frame.size.height/2 - imageView.frame.size.height/4-5, width: CGFloat(dialogViewWidth) + 8, height: 70)
-        titleLabel.text = title
-        titleLabel.font = UIFont(name: "Futura", size: 22)
-        titleLabel.textAlignment = .left
-        titleLabel.lineBreakMode = NSLineBreakMode.byWordWrapping
-        titleLabel.numberOfLines = 0
-        titleLabel.sizeToFit()
-        self.createShadow(view: titleLabel, color: UIColor.black, Offset: CGSize(width:0, height:0), opacity: 0.5, radious: 1)
-        dialogView.addSubview(titleLabel)
-        
+        titleLabel.frame = CGRect(x: self.imageView.frame.size.width-5, y: self.imageView.frame.size.height/2 - imageView.frame.size.height/4-5, width: CGFloat(dialogViewWidth) + 8, height: 70)
+        //TODO: height = 50 ,应该为计算得到的文字高度
         lblMessage.frame = CGRect(x: 17, y: Int(titleLabel.frame.origin.y + titleLabel.frame.size.height + 8 + 10), width: dialogViewWidth - 30, height: 50)
-        lblMessage.numberOfLines = 0
-        lblMessage.lineBreakMode = NSLineBreakMode.byWordWrapping
-        lblMessage.font = UIFont(name: "Futura", size: 17)
-        lblMessage.textAlignment = NSTextAlignment.center
-        lblMessage.textColor = UIColor.darkGray
-        lblMessage.text = description
-        lblMessage.sizeToFit()
-        dialogView.addSubview(lblMessage)
-        
-        btnDone = UIButton(frame: CGRect(x: 8, y:lblMessage.frame.origin.y + lblMessage.frame.size.height + 8, width: 100, height:40))
-        btnDone.setTitle("Okay", for: UIControlState.normal)
-        btnDone.addTarget(self, action: #selector(didButtonTapped), for: UIControlEvents.touchUpInside)
-        btnDone.backgroundColor =  UIColor.darkText
-        btnDone.setTitleColor(UIColor.groupTableViewBackground, for: UIControlState.normal)
-        btnDone.titleLabel?.font = UIFont(name: "Avenir Next Bold", size: 17)
-        self.createShadow(view: btnDone, color: UIColor.black, Offset: CGSize(width:0, height:0), opacity: 0.7, radious: 3)
-        dialogView.addSubview(btnDone)
+        btnDone.frame = CGRect(x: 8, y:lblMessage.frame.origin.y + lblMessage.frame.size.height + 8, width: 100, height:40)
         
         // set dynamic height for alert view and their controls
         let dialogViewHeight = titleLabel.frame.height + 8 + lblMessage.frame.height + 8 + btnDone.frame.height + 8 + 30
         btnDone.frame.origin = CGPoint(x:CGFloat(dialogViewWidth)-105, y:dialogViewHeight-45)
         dialogView.frame.origin = CGPoint(x: 32, y: frame.height)
         dialogView.frame.size = CGSize(width: CGFloat(dialogViewWidth), height: dialogViewHeight)
-        dialogView.backgroundColor = UIColor.clear
-        self.createGradientLayer(view: dialogView, colorOne: UIColor.white, colorTwo: UIColor.white)
         
         lblMessage.center = CGPoint(x: dialogView.frame.size.width / 2, y: dialogView.frame.size.height/2)
-        dialogView.layer.cornerRadius = 10
-        dialogView.clipsToBounds = true
+        
+        addSubview(backgroundView)
+        dialogView.addSubview(imageView)
+        dialogView.addSubview(titleLabel)
+        dialogView.addSubview(lblMessage)
+        dialogView.addSubview(btnDone)
+        
+        self.createGradientLayer(view: dialogView, colorOne: UIColor.white, colorTwo: UIColor.white)
         addSubview(dialogView)
         
     }
@@ -167,11 +188,4 @@ class AlertVw: UIView, alertProtocol {
         view.layer.insertSublayer(gradientLayer, at: 0)
     }
     
-    // set shadow of controls
-    func createShadow(view:UIView, color:UIColor, Offset:CGSize, opacity:Float, radious:Float){
-        view.layer.shadowColor = color.cgColor
-        view.layer.shadowOffset = Offset
-        view.layer.shadowOpacity = opacity
-        view.layer.shadowRadius = CGFloat(radious)
-    }
 }

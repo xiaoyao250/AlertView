@@ -32,7 +32,7 @@ class ViewController: UIViewController {
         
         // simple way to show alert view
         
-        alertView = AlertVw(title:"Congratulations!", description:"You have registered successfully.", image:#imageLiteral(resourceName: "success"))
+        alertView = AlertVw(title:"放弃行程", description:"行程放弃了就无法恢复了哦～行程放弃了就无法恢复了哦～行程放弃了就无法恢复了哦～行程放弃了就无法恢复了哦～行程放弃了就无法恢复了哦～行程放弃了就无法恢复了哦～", image:#imageLiteral(resourceName: "error"))
         alertView.show(animated: true)
 
     }
