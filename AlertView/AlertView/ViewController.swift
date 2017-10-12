@@ -32,7 +32,6 @@ class ViewController: UIViewController {
         
         // simple way to show alert view
         alertView = AlertVw.init(title: "新建标签", alertType: .input, message: "输入标签...", btnDoneTitle: "确认")
-        
         alertView.show(animated: true)
         
         

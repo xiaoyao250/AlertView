@@ -13,7 +13,7 @@ enum AlertType {
     case input
 }
 
-class AlertVw: UIView, alertProtocol {
+class AlertVw: UIView, AlertProtocol {
     
     // Declare the protocol controls
     lazy var backgroundView: UIView = {
@@ -139,6 +139,13 @@ class AlertVw: UIView, alertProtocol {
         backgroundView.backgroundColor = color
     }
     
+    public func getBtnDone() -> UIButton {
+        return btnDone
+    }
+    
+    public func getTextField() -> UITextField {
+        return textField
+    }
     
     func initialise(title: String, alertType: AlertType, message: String, btnDoneTitle: String) {
         // get dynamic width for alertView and all controlls
@@ -195,6 +202,10 @@ class AlertVw: UIView, alertProtocol {
         self.createGradientLayer(view: dialogView, colorOne: UIColor.white, colorTwo: UIColor.white)
         addSubview(dialogView)
         
+    }
+    
+    func didBtnDoneTappad() {
+        print("btnDone isTappad,get btn use getBtnDone()")
     }
     
     // dismiss the alert view

@@ -1,5 +1,5 @@
 //
-//  alertProtocol.swift
+//  AlertProtocol.swift
 //  AlertView
 //
 //  Created by Sowrirajan Sugumaran on 9/13/17.
@@ -10,7 +10,7 @@ import Foundation
 import UIKit
 
 // Protocol for showing and dissmising alert view
-protocol alertProtocol {
+protocol AlertProtocol {
     func show(animated:Bool)
     func dismiss(animated:Bool)
     var backgroundView: UIView {get}
@@ -19,7 +19,7 @@ protocol alertProtocol {
     var clearBackground: Bool {get}
 }
 
-extension alertProtocol where Self:UIView{
+extension AlertProtocol where Self:UIView{
     
     func show(animated:Bool){
         
