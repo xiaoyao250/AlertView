@@ -8,6 +8,11 @@
 
 import UIKit
 
+enum AlertType {
+    case text
+    case input
+}
+
 class AlertVw: UIView, alertProtocol {
     
     // Declare the protocol controls
@@ -20,27 +25,17 @@ class AlertVw: UIView, alertProtocol {
     lazy var dialogView: UIView = {
         let dialogView = UIView()
         dialogView.backgroundColor = UIColor.clear
-        dialogView.layer.cornerRadius = 10
+        dialogView.layer.cornerRadius = 5
         dialogView.clipsToBounds = true
         return dialogView
     }()
     var appearFrom = String()
     var clearBackground = Bool()
     
-    fileprivate lazy var imageView: UIImageView = {
-        let imageView = UIImageView()
-        imageView.layer.cornerRadius = imageView.frame.size.height/2
-        imageView.clipsToBounds = true
-        imageView.alpha = 0.9
-        imageView.contentMode = .scaleAspectFit
-        
-
-        return imageView
-    }()
     fileprivate lazy var titleLabel: UILabel = {
         let titleLabel = UILabel()
-        titleLabel.font = UIFont(name: "Futura", size: 22)
-        titleLabel.textAlignment = .left
+        titleLabel.font = UIFont.systemFont(ofSize: 18)
+        titleLabel.textAlignment = .center
         titleLabel.lineBreakMode = NSLineBreakMode.byWordWrapping
         titleLabel.numberOfLines = 0
         titleLabel.sizeToFit()
@@ -50,23 +45,45 @@ class AlertVw: UIView, alertProtocol {
         let lblMessage = UILabel()
         lblMessage.numberOfLines = 0
         lblMessage.lineBreakMode = NSLineBreakMode.byWordWrapping
-        lblMessage.font = UIFont(name: "Futura", size: 17)
-        lblMessage.textAlignment = NSTextAlignment.center
+        lblMessage.font = UIFont.systemFont(ofSize: 15)
+        lblMessage.textAlignment = .center
         lblMessage.textColor = UIColor.darkGray
         lblMessage.sizeToFit()
         return lblMessage
     }()
+    fileprivate lazy var textField: UITextField = {
+        let textField = UITextField()
+        textField.font = UIFont.systemFont(ofSize: 15)
+        textField.placeholder = "请输入标签..."
+        textField.textColor = UIColor.gray
+        textField.borderStyle = .none
+        textField.layer.cornerRadius = 5
+        textField.layer.borderWidth = 0.5
+        textField.leftView = UIView.init(frame: CGRect.init(x: 0, y: 0, width: 10, height: 0))
+        //设置显示模式为永远显示(默认不显示)
+        textField.leftViewMode = .always;
+        return textField
+    }()
+    
+    fileprivate lazy var btnCancel: UIButton = {
+        let btnCancel = UIButton()
+        btnCancel.backgroundColor =  UIColor.darkText
+        btnCancel.setTitleColor(UIColor.groupTableViewBackground, for: UIControlState.normal)
+        btnCancel.titleLabel?.font = UIFont.boldSystemFont(ofSize: 18)
+        return btnCancel
+    }()
+    
     fileprivate lazy var btnDone: UIButton = {
         let btnDone = UIButton()
         btnDone.backgroundColor =  UIColor.darkText
         btnDone.setTitleColor(UIColor.groupTableViewBackground, for: UIControlState.normal)
-        btnDone.titleLabel?.font = UIFont(name: "Avenir Next Bold", size: 17)
+        btnDone.titleLabel?.font = UIFont.boldSystemFont(ofSize: 18)
         return btnDone
     }()
     
-    convenience init(title:String, description:String, image:UIImage) {
+    convenience init(title: String, alertType: AlertType, message: String, btnDoneTitle: String) {
         self.init(frame:UIScreen.main.bounds)
-        self.initialise(title:title, description:description, image:image)
+        self.initialise(title: title, alertType: alertType, message: message, btnDoneTitle: btnDoneTitle)
     }
     
     override init(frame: CGRect) {
@@ -123,39 +140,58 @@ class AlertVw: UIView, alertProtocol {
     }
     
     
-    func initialise(title:String, description:String, image:UIImage) {
-        
+    func initialise(title: String, alertType: AlertType, message: String, btnDoneTitle: String) {
         // get dynamic width for alertView and all controlls
         
-        imageView.image = image
-        titleLabel.text = title
-        lblMessage.text = description
-        btnDone.setTitle("Okay", for: UIControlState.normal)
-        btnDone.addTarget(self, action: #selector(didButtonTapped), for: UIControlEvents.touchUpInside)
-        
-        let dialogViewWidth = 260
+        let dialogViewWidth: CGFloat = 270
         backgroundView.frame = self.frame
+        addSubview(backgroundView)
         
-        imageView.frame.origin = CGPoint(x: -13, y: -13)
-        imageView.frame.size = CGSize(width: 70 , height: 70)
-        titleLabel.frame = CGRect(x: self.imageView.frame.size.width-5, y: self.imageView.frame.size.height/2 - imageView.frame.size.height/4-5, width: CGFloat(dialogViewWidth) + 8, height: 70)
-        //TODO: height = 50 ,应该为计算得到的文字高度
-        lblMessage.frame = CGRect(x: 17, y: Int(titleLabel.frame.origin.y + titleLabel.frame.size.height + 8 + 10), width: dialogViewWidth - 30, height: 50)
-        btnDone.frame = CGRect(x: 8, y:lblMessage.frame.origin.y + lblMessage.frame.size.height + 8, width: 100, height:40)
+        titleLabel.text = title
+        titleLabel.frame.origin.y = 35
+        titleLabel.center.x = 15
+        titleLabel.frame.size = CGSize.init(width: dialogViewWidth - 30, height: 36)
+        dialogView.addSubview(titleLabel)
+        
+        let contentVY: CGFloat = (titleLabel.frame.origin.y + titleLabel.frame.size.height + 15)
+        var contentVW: CGFloat = 0
+        var contentVH: CGFloat = 0
+        if alertType == .text {
+            lblMessage.text = message
+            contentVW = dialogViewWidth - 30
+            contentVH = lblMessage.text!.height(with: contentVW, font: lblMessage.font)
+            lblMessage.frame = CGRect(x: 15, y: contentVY, width: contentVW, height: contentVH)
+            dialogView.addSubview(lblMessage)
+        }else {
+            textField.placeholder = message
+            contentVW = dialogViewWidth - 30
+            contentVH = 45
+            textField.frame = CGRect(x: 15, y: contentVY, width: contentVW, height: contentVH)
+            dialogView.addSubview(textField)
+        }
+        
+        let btnCancelW = (dialogViewWidth - 45) / 2
+        btnCancel.addTarget(self, action: #selector(didButtonTapped), for: UIControlEvents.touchUpInside)
+        btnCancel.frame = CGRect(x: 15, y: contentVY + contentVH + 20, width: btnCancelW, height:40)
+        btnCancel.setTitle("取消", for: UIControlState.normal)
+        dialogView.addSubview(btnCancel)
+        btnDone.setTitle(btnDoneTitle, for: UIControlState.normal)
+        btnDone.addTarget(self, action: #selector(didButtonTapped), for: UIControlEvents.touchUpInside)
+        btnDone.frame = btnCancel.frame
+        btnDone.frame.origin.x = 15 + btnCancelW + 15
+        dialogView.addSubview(btnDone)
         
         // set dynamic height for alert view and their controls
-        let dialogViewHeight = titleLabel.frame.height + 8 + lblMessage.frame.height + 8 + btnDone.frame.height + 8 + 30
-        btnDone.frame.origin = CGPoint(x:CGFloat(dialogViewWidth)-105, y:dialogViewHeight-45)
+        let dialogViewHeight = btnDone.frame.maxY + 20
         dialogView.frame.origin = CGPoint(x: 32, y: frame.height)
-        dialogView.frame.size = CGSize(width: CGFloat(dialogViewWidth), height: dialogViewHeight)
+        dialogView.frame.size = CGSize(width: dialogViewWidth, height: dialogViewHeight)
         
-        lblMessage.center = CGPoint(x: dialogView.frame.size.width / 2, y: dialogView.frame.size.height/2)
+        if alertType == .text  {
+            lblMessage.center = CGPoint(x: dialogView.frame.size.width / 2, y: dialogView.frame.size.height/2)
+        }else {
+            textField.center = CGPoint(x: dialogView.frame.size.width / 2, y: dialogView.frame.size.height/2)
+        }
         
-        addSubview(backgroundView)
-        dialogView.addSubview(imageView)
-        dialogView.addSubview(titleLabel)
-        dialogView.addSubview(lblMessage)
-        dialogView.addSubview(btnDone)
         self.createGradientLayer(view: dialogView, colorOne: UIColor.white, colorTwo: UIColor.white)
         addSubview(dialogView)
         
@@ -173,5 +209,22 @@ class AlertVw: UIView, alertProtocol {
         gradientLayer.colors = [colorOne.cgColor, colorTwo.cgColor]
         view.layer.insertSublayer(gradientLayer, at: 0)
     }
-    
+}
+
+extension String {
+    /// 返回文本高度
+    ///
+    /// - Parameters:
+    ///   - width: 文本宽度
+    ///   - font: 文本字体
+    /// - Returns: 文本占高度
+    public func height(with width: CGFloat ,font:UIFont) -> CGFloat {
+        let calString = self as NSString
+        let constraintRect = CGSize(width: width, height: .greatestFiniteMagnitude)
+        let attributes = [NSFontAttributeName: font]
+        let option = NSStringDrawingOptions.usesLineFragmentOrigin
+        
+        let boundingBox = calString.boundingRect(with: constraintRect, options: option, attributes: attributes, context: nil)
+        return boundingBox.height
+    }
 }

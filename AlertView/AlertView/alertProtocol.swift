@@ -42,7 +42,7 @@ extension alertProtocol where Self:UIView{
                 if self.clearBackground == true{
                     self.backgroundView.alpha = 0
                 }else{
-                    self.backgroundView.alpha = 0.66
+                    self.backgroundView.alpha = 0.6
                 }
             })
             // Set origin during Animation
@@ -53,7 +53,7 @@ extension alertProtocol where Self:UIView{
             if self.clearBackground == true{
                 self.backgroundView.alpha = 0
             }else{
-                self.backgroundView.alpha = 0.66
+                self.backgroundView.alpha = 0.6
             }
             self.dialogView.center = self.center
         }
